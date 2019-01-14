@@ -15,6 +15,12 @@ class TestApplicationUpdater(updaters.ApplicationUpdater):
         """Apply updates to any test Applications."""
         return 'test' in application['name']
 
+    @staticmethod
+    def update(application):
+        """Overwrite the owner email."""
+        application['email'] = 'test@example.spinnaker'
+        return application
+
 
 def main():
     """Entry point."""
