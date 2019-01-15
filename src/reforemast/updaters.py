@@ -58,3 +58,13 @@ class ApplicationUpdater(Updater):
 
         response = spinnaker_client.post(endpoint=f'/applications/{name}/tasks', json=task)
         return response
+
+
+class PipelineUpdater(Updater):
+    """Update Spinnaker Pipeline."""
+
+    @classmethod
+    def push(cls, pipeline):
+        """Upload changes to Spinnaker Pipeline configuration."""
+        response = spinnaker_client.post(endpoint=f'/pipelines', json=pipeline)
+        return response
