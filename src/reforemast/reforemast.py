@@ -3,7 +3,6 @@ import logging
 
 import click
 
-from . import diffs, spinnaker_client
 from .applications import applications
 from .pipelines import pipelines
 from .settings import SETTINGS
@@ -11,7 +10,7 @@ from .settings import SETTINGS
 LOG = logging.getLogger(__name__)
 
 
-def confirm_and_apply(updater, obj, parent_obj=None):
+def confirm_and_apply(updater):
     """Prompt for confirmation with diff before applying changes.
 
     Args:
@@ -26,17 +25,13 @@ def confirm_and_apply(updater, obj, parent_obj=None):
     """
     updated = False
 
-    differ = diffs.DiffJson(obj)
-    with differ as content:
-        updater.update(content)
-
-    highlighted_diff = differ.highlighted
-    if highlighted_diff:
-        click.echo(highlighted_diff)
+    diff = updater.diff_update()
+    if diff:
+        click.echo(diff)
 
         if click.confirm('Apply changes?'):
-            updater.update(obj)
-            updater.push(parent_obj or obj)
+            updater.update()
+            updater.push()
             updated = True
 
     return updated
@@ -52,28 +47,25 @@ class Reforemast:
         """Iterate over Spinnaker Application and Pipeline configurations."""
         for application in applications():
             for application_updater in self.settings.application_updaters:
-                name = application['name']
+                a_updater = application_updater(application)
 
-                try:
-                    application_matched = application_updater.match(application)
-                except KeyError as error:
-                    LOG.error('Application %s is most likely not configured: %s', name, error)
-                    continue
+                if a_updater.match():
+                    click.secho(f'Application: {a_updater.name}', bold=True)
 
-                if application_matched:
+                    a_updater.get()
 
-                    click.secho(f'Application: {name}', bold=True)
-
-                    application_config = spinnaker_client.get(f'/applications/{name}')
-
-                    confirm_and_apply(application_updater, application_config)
+                    confirm_and_apply(a_updater)
 
                     for pipeline in pipelines(application):
                         for pipeline_updater in self.settings.pipeline_updaters:
-                            if pipeline_updater.match(pipeline):
-                                confirm_and_apply(pipeline_updater, pipeline)
+                            p_updater = pipeline_updater(pipeline)
+
+                            if p_updater.match():
+                                confirm_and_apply(p_updater)
 
                                 for stage in pipeline['stages']:
                                     for stage_updater in self.settings.stage_updaters:
-                                        if stage_updater.match(stage):
-                                            confirm_and_apply(stage_updater, stage, parent_obj=pipeline)
+                                        s_updater = stage_updater(stage, parent_obj=pipeline)
+
+                                        if s_updater.match():
+                                            confirm_and_apply(s_updater)
