@@ -41,11 +41,11 @@ smaller changes that are easier to comprehend.
 Classes available to subclass are in
 [src/reforemast/updaters.py](src/reforemast/updaters.py):
 
-* [x] ApplicationUpdater - Primarily used for updating Spinnaker Application
+* ApplicationUpdater - Primarily used for updating Spinnaker Application
   configurations
-* [ ] PipelineUpdater - Use to update Spinnaker Pipeline configurations outside
-  of Stages
-* [ ] StageUpdater - Update Pipline Stage configurations
+* PipelineUpdater - Use to update Spinnaker Pipeline configurations outside of
+  Stages
+* StageUpdater - Update Pipline Stage configurations
 
 When subclassing, override the `match` and `update` Static Methods. These are Static due to not needing to maintain the state of the updater.
 
