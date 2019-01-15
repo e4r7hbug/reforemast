@@ -47,7 +47,7 @@ Classes available to subclass are in
   Stages
 * StageUpdater - Update Pipline Stage configurations
 
-When subclassing, override the `match` and `update` Static Methods. These are Static due to not needing to maintain the state of the updater.
+When subclassing, override the `match` and `update` Methods.
 
 ```python
 from reforemast import updaters
@@ -55,20 +55,18 @@ from reforemast import updaters
 class EmailUpdater(updaters.ApplicationUpdater):
     """Set the email field to the Application owner."""
 
-    @staticmethod
-    def match(application):
+    def match(self):
         """All bean Applications."""
-        return 'bean' in application['name']
+        return 'bean' in self.application['name']
 
-    @staticmethod
-    def update(application):
+    def update(self):
         """Bean Applications are owned by Ryu."""
-        application['email'] = 'ryu@street.fighter'
-        return application
+        self.application['email'] = 'ryu@street.fighter'
+        return self.application
 ```
 
 If there are some variables that need to be more visible or are costly to
-repeatedly generate, then use a Class Method.
+repeatedly generate, then attach the data as a Class Attribute.
 
 ```python
 def get_application_permissions():
@@ -83,18 +81,16 @@ class PermissionsUpdater(updaters.ApplicationUpdater):
 
     permissions = get_application_permissions()
 
-    @classmethod
-    def match(cls, application):
+    def match(self):
         """Find Applications configured in the IdP."""
-        return application['name'] in cls.permissions
+        return self.application['name'] in self.permissions
 
-    @classmethod
-    def update(cls, application):
+    def update(self):
         """Reset permissions to match IdP."""
-        name = application['name']
-        permissions = cls.permissions[name]
-        application['attributes'].setdefault('permissions', permisions)
-        return application
+        name = self.application['name']
+        permissions = self.permissions[name]
+        self.application['attributes'].setdefault('permissions', permisions)
+        return self.application
 ```
 
 These should be loaded into settings for Reforemast to apply.
