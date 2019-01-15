@@ -10,14 +10,12 @@ from .settings import SETTINGS
 LOG = logging.getLogger(__name__)
 
 
-def confirm_and_apply(updater):
+def confirm_and_apply(updater, auto_apply=False):
     """Prompt for confirmation with diff before applying changes.
 
     Args:
+        auto_apply (bool): Automatically submit changes.
         updater (reforemast.Updater): Instance of configuration updater.
-        obj (obj): Configuration object to update.
-        parent_obj (obj): Main Object containing reference to Object, mostly
-            for Stages in a Pipeline.
 
     Returns:
         bool: If the updater was applied to the object.
@@ -29,7 +27,7 @@ def confirm_and_apply(updater):
     if diff:
         click.echo(diff)
 
-        if click.confirm('Apply changes?'):
+        if auto_apply or click.confirm('Apply changes?'):
             updater.update()
             updater.push()
             updated = True
@@ -54,18 +52,18 @@ class Reforemast:
 
                     a_updater.get()
 
-                    confirm_and_apply(a_updater)
+                    confirm_and_apply(a_updater, auto_apply=self.settings.auto_apply)
 
                     for pipeline in pipelines(application):
                         for pipeline_updater in self.settings.pipeline_updaters:
                             p_updater = pipeline_updater(pipeline)
 
                             if p_updater.match():
-                                confirm_and_apply(p_updater)
+                                confirm_and_apply(p_updater, auto_apply=self.settings.auto_apply)
 
                                 for stage in pipeline['stages']:
                                     for stage_updater in self.settings.stage_updaters:
                                         s_updater = stage_updater(stage, parent_obj=pipeline)
 
                                         if s_updater.match():
-                                            confirm_and_apply(s_updater)
+                                            confirm_and_apply(s_updater, auto_apply=self.settings.auto_apply)

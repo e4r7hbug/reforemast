@@ -5,6 +5,7 @@ class Settings:
     """Reforemast settings."""
 
     def __init__(self):
+        self.auto_apply = False
         self.gate_url = 'https://gate.spinnaker.com'
 
         self.application_updaters = []
