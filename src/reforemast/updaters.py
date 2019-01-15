@@ -44,14 +44,13 @@ class ApplicationUpdater(Updater):
     def push(cls, application):
         """Upload changes to Spinnaker Application configuration."""
         name = application['name']
-        updated_application = cls.update(application)
 
         task = {
             'application': name,
             'description': f'Update Application: {name}',
             'job': [
                 {
-                    'application': updated_application,
+                    'application': application,
                     'type': 'updateApplication',
                 },
             ],

@@ -33,6 +33,7 @@ def confirm_and_apply(updater, obj):
         click.echo(highlighted_diff)
 
         if click.confirm('Apply changes?'):
+            updater.update(obj)
             updater.push(obj)
             updated = True
 
