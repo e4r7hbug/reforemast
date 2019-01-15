@@ -62,7 +62,6 @@ class EmailUpdater(updaters.ApplicationUpdater):
     def update(self):
         """Bean Applications are owned by Ryu."""
         self.application['email'] = 'ryu@street.fighter'
-        return self.application
 ```
 
 If there are some variables that need to be more visible or are costly to
@@ -90,7 +89,6 @@ class PermissionsUpdater(updaters.ApplicationUpdater):
         name = self.application['name']
         permissions = self.permissions[name]
         self.application['attributes'].setdefault('permissions', permisions)
-        return self.application
 ```
 
 These should be loaded into settings for Reforemast to apply.
