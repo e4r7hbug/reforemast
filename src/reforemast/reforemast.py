@@ -11,12 +11,14 @@ from .settings import SETTINGS
 LOG = logging.getLogger(__name__)
 
 
-def confirm_and_apply(updater, obj):
+def confirm_and_apply(updater, obj, parent_obj=None):
     """Prompt for confirmation with diff before applying changes.
 
     Args:
         updater (reforemast.Updater): Instance of configuration updater.
         obj (obj): Configuration object to update.
+        parent_obj (obj): Main Object containing reference to Object, mostly
+            for Stages in a Pipeline.
 
     Returns:
         bool: If the updater was applied to the object.
@@ -34,7 +36,7 @@ def confirm_and_apply(updater, obj):
 
         if click.confirm('Apply changes?'):
             updater.update(obj)
-            updater.push(obj)
+            updater.push(parent_obj or obj)
             updated = True
 
     return updated
@@ -74,4 +76,4 @@ class Reforemast:
                                 for stage in pipeline['stages']:
                                     for stage_updater in self.settings.stage_updaters:
                                         if stage_updater.match(stage):
-                                            confirm_and_apply(stage_updater, stage)
+                                            confirm_and_apply(stage_updater, stage, parent_obj=pipeline)
