@@ -4,10 +4,14 @@ from setuptools import find_packages, setup
 
 GITHUB_URL = 'https://github.com/e4r7hbug/reforemast'
 
+with open('README.md', 'rt') as file:
+    README = file.read()
+
 setup(
     name='reforemast',
     description='Reformat Spinnaker Application and Pipeline configurations, change by change.',
-    long_description='',
+    long_description=README,
+    long_description_content_type='text/markdown',
     author='',
     author_email='',
     url=GITHUB_URL,
