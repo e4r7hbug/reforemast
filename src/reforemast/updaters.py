@@ -14,12 +14,7 @@ class Updater:
             :obj:`True`.
 
         """
-        matched = False
-
-        if 'ntangsurat' in obj['name']:
-            return matched
-
-        return matched
+        return True
 
     @staticmethod
     def update(obj):
