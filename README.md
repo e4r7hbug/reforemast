@@ -4,6 +4,33 @@ Reformat your Spinnaker Pipelines adhoc. All of the filtering and updating
 logic is meant to be kept in a separate runnable script. See
 [src/reforemast/__main__.py](src/reforemast/__main__.py) for an example.
 
+## Install
+
+Install easily with `pip`.
+
+```shell
+$ pip install .
+```
+
+## Testing
+
+Use `tox` to run unit testing and linting in multiple virtual environments.
+
+```shell
+$ pip install tox
+$ tox
+```
+
+## Local Development
+
+The [Pipfile](Pipfile) has been set to install the local copy as an editable
+Package for faster development.
+
+```shell
+$ pipenv install
+$ pipenv shell
+```
+
 ## Updaters
 
 Updaters are Classes that contain a couple predetermined Methods that are
