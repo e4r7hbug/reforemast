@@ -68,3 +68,7 @@ class PipelineUpdater(Updater):
         """Upload changes to Spinnaker Pipeline configuration."""
         response = spinnaker_client.post(endpoint=f'/pipelines', json=pipeline)
         return response
+
+
+class StageUpdater(PipelineUpdater):
+    """Update Spinnaker Pipeline Stage."""
