@@ -6,7 +6,6 @@ verify_ssl = true
 [dev-packages]
 prospector = {extras = ["with_everything"],version = "*"}
 pytest-cov = "*"
-tox = "*"
 
 [packages]
 reforemast = {editable = true,path = "."}
