@@ -10,8 +10,8 @@ DIFF_LEXER = lexers.get_lexer_by_name('diff')
 DIFF_FORMATTER = formatters.get_formatter_by_name('terminal16m')
 
 
-class DiffJson:
-    """JSON diff."""
+class DiffText:
+    """Generic text diffs."""
 
     def __init__(self, content):
         self.original_content = content
@@ -32,8 +32,8 @@ class DiffJson:
         self.after = self.copy()
 
     def copy(self):
-        """Convert contents into static JSON string."""
-        return json.dumps(self.preview, indent=2)
+        """Duplicate string for modification."""
+        return str(self.preview)
 
     @property
     def diff(self):
@@ -58,3 +58,11 @@ class DiffJson:
         highlighted_diff = highlighted_diff.rstrip('\n')
 
         return highlighted_diff
+
+
+class DiffJson(DiffText):
+    """JSON diff."""
+
+    def copy(self):
+        """Convert contents into static JSON string."""
+        return json.dumps(self.preview, indent=2)
