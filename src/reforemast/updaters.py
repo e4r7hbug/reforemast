@@ -98,6 +98,11 @@ class ApplicationUpdater(Updater):
 class PipelineUpdater(Updater):
     """Update Spinnaker Pipeline."""
 
+    def __init__(self, *args, application_name='', **kwargs):
+        self.application_name = application_name
+
+        super().__init__(*args, **kwargs)
+
     @property
     def pipeline(self):
         return self.obj

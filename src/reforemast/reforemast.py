@@ -60,20 +60,43 @@ class Reforemast:
 
                     yield a_updater
 
-    def matched_pipeline_updaters(self, application):
-        """Generate Pipeline Updaters matching Spinnaker Pipelines."""
-        for pipeline in pipelines(application):
+    def matched_pipeline_updaters(self, application_updater):
+        """Generate Pipeline Updaters matching Spinnaker Pipelines.
+
+        Args:
+            application_updater (reforemast.updaters.ApplicationUpdater):
+                Instance of a Spinnaker Application Updater.
+
+        Yields:
+            reforemast.updaters.PipelineUpdater: Instance of Spinnaker Pipeline Updater.
+
+        """
+        for pipeline in pipelines(application_updater.application):
             for pipeline_updater in self.settings.pipeline_updaters:
-                p_updater = pipeline_updater(pipeline)
+                p_updater = pipeline_updater(pipeline, application_name=application_updater.name)
 
                 if p_updater.match():
                     yield p_updater
 
-    def matched_stage_updaters(self, pipeline):
-        """Generate Stage Updaters matching Spinnaker Pipelines."""
-        for stage in pipeline['stages']:
+    def matched_stage_updaters(self, pipeline_updater):
+        """Generate Stage Updaters matching Spinnaker Pipelines.
+
+        Args:
+            pipeline (reforemast.updaters.PipelineUpdater): Instance of a
+                Spinnaker Pipeline Updater.
+
+        Yields:
+            reforemast.updaters.StageUpdater: Instance of Pipeline Stage
+                Updater.
+
+        """
+        for stage in pipeline_updater.pipeline['stages']:
             for stage_updater in self.settings.stage_updaters:
-                s_updater = stage_updater(stage, parent_obj=pipeline)
+                s_updater = stage_updater(
+                    stage,
+                    application_name=pipeline_updater.application_name,
+                    parent_obj=pipeline_updater.pipeline,
+                )
 
                 if s_updater.match():
                     yield s_updater
@@ -87,8 +110,8 @@ class Reforemast:
         for application_updater in self.matched_application_updaters():
             confirm_and_apply(application_updater, auto_apply=self.settings.auto_apply)
 
-            for pipeline_updater in self.matched_pipeline_updaters(application_updater.application):
+            for pipeline_updater in self.matched_pipeline_updaters(application_updater):
                 confirm_and_apply(pipeline_updater, auto_apply=self.settings.auto_apply)
 
-                for stage_updater in self.matched_stage_updaters(pipeline_updater.pipeline):
+                for stage_updater in self.matched_stage_updaters(pipeline_updater):
                     confirm_and_apply(stage_updater, auto_apply=self.settings.auto_apply)
