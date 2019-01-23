@@ -1,7 +1,7 @@
 """Reforemast global settings."""
 
 
-class Settings:
+class Settings:  # pylint: disable=locally-disabled,too-few-public-methods
     """Reforemast settings."""
 
     def __init__(self):
