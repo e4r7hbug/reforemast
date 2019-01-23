@@ -10,16 +10,13 @@ LOG = logging.getLogger(__name__)
 class TestApplicationUpdater(updaters.ApplicationUpdater):
     """Example updater."""
 
-    @staticmethod
-    def match(application):
+    def match(self):
         """Apply updates to any test Applications."""
-        return 'test' in application['name']
+        return 'test' in self.name
 
-    @staticmethod
-    def update(application):
+    def update(self):
         """Overwrite the owner email."""
-        application['email'] = 'test@example.spinnaker'
-        return application
+        self.application['email'] = 'test@example.spinnaker'
 
 
 def main():
