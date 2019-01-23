@@ -66,14 +66,16 @@ class ApplicationUpdater(Updater):
 
     @property
     def application(self):
+        """Spinnaker Application configuration JSON."""
         return self.obj
 
     @property
     def name(self):
+        """Spinnaker Application name."""
         return self.application['name']
 
     def get(self):
-        """Retrive Spinnaker Application configuration."""
+        """Retrieve Spinnaker Application configuration."""
         self.obj = spinnaker_client.get(endpoint=f'/applications/{self.name}')
         return self.obj
 
@@ -105,6 +107,7 @@ class PipelineUpdater(Updater):
 
     @property
     def pipeline(self):
+        """Spinnaker Pipeline configuration JSON."""
         return self.obj
 
     def push(self):
@@ -118,8 +121,10 @@ class StageUpdater(PipelineUpdater):
 
     @property
     def pipeline(self):
+        """Spinnaker Pipeline configuration JSON."""
         return self.parent_obj
 
     @property
     def stage(self):
+        """Stage configuration JSON in Spinnaker Pipeline."""
         return self.obj
