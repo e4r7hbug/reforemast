@@ -1,4 +1,5 @@
 """Reforemast entry point."""
+import collections
 import logging
 
 import click
@@ -42,6 +43,8 @@ class Reforemast:
 
     def __init__(self):
         self.settings = SETTINGS
+
+        self.updated_applications = collections.defaultdict(lambda: collections.defaultdict(set))
 
     def matched_application_updaters(self):
         """Generate Application Updaters matching Spinnaker Applications."""
@@ -108,10 +111,29 @@ class Reforemast:
         LOG.debug('Apply Stage Updaters: %s', self.settings.stage_updaters)
 
         for application_updater in self.matched_application_updaters():
-            confirm_and_apply(application_updater, auto_apply=self.settings.auto_apply)
+            updated = confirm_and_apply(application_updater, auto_apply=self.settings.auto_apply)
+            if updated:
+                _ = self.updated_applications[application_updater.name]
 
             for pipeline_updater in self.matched_pipeline_updaters(application_updater):
-                confirm_and_apply(pipeline_updater, auto_apply=self.settings.auto_apply)
+                updated = confirm_and_apply(pipeline_updater, auto_apply=self.settings.auto_apply)
+                if updated:
+                    _ = self.updated_applications[application_updater.name][pipeline_updater.name]
 
                 for stage_updater in self.matched_stage_updaters(pipeline_updater):
-                    confirm_and_apply(stage_updater, auto_apply=self.settings.auto_apply)
+                    updated = confirm_and_apply(stage_updater, auto_apply=self.settings.auto_apply)
+                    if updated:
+                        self.updated_applications[application_updater.name][pipeline_updater.name].add(
+                            stage_updater.name)
+
+    def print_updated(self):
+        """Print a Markdown formatted list of updated Spinnaker Applications."""
+        click.echo('# Updated Applications\n')
+        for updated_application, updated_pipelines in sorted(self.updated_applications.items()):
+            click.echo(f'* {updated_application}')
+
+            for updated_pipeline, updated_stages in updated_pipelines.items():
+                click.echo(f'  * {updated_pipeline}')
+
+                for updated_stage in updated_stages:
+                    click.echo(f'    * {updated_stage}')
