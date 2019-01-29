@@ -106,6 +106,11 @@ class PipelineUpdater(Updater):
         super().__init__(*args, **kwargs)
 
     @property
+    def name(self):
+        """Spinnaker Pipeline name."""
+        return self.pipeline['name']
+
+    @property
     def pipeline(self):
         """Spinnaker Pipeline configuration JSON."""
         return self.obj
@@ -118,6 +123,11 @@ class PipelineUpdater(Updater):
 
 class StageUpdater(PipelineUpdater):
     """Update Spinnaker Pipeline Stage."""
+
+    @property
+    def name(self):
+        """Spinnaker Pipeline Stage name."""
+        return self.stage['name']
 
     @property
     def pipeline(self):
