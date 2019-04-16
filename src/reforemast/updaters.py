@@ -79,6 +79,7 @@ class ApplicationUpdater(Updater):
         self.obj = spinnaker_client.get(endpoint=f'/applications/{self.name}')
         attr = self.obj.pop('attributes')
         self.obj.update(attr)
+        self.obj.pop('clusters', None)
         return self.obj
 
     def push(self):
